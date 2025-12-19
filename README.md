@@ -36,5 +36,5 @@
 ### Сборка и запуск
 1. Клонируйте репозиторий:
    ```bash
-   git clone https://github.com/yourusername/grokking-algorithms-java11.git
-   cd grokking-algorithms-java11
+   git clone https://github.com/yourusername/grokking-algorithms.git
+   cd grokking-algorithms
