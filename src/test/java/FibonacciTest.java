@@ -1,8 +1,12 @@
 import chapter03.recursion.Fibonacci;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class FibonacciTest {
-    public static void main(String[] args) {
-        int n = 5;
-        System.out.println(Fibonacci.fibonacci(n) == (2 + 3));
+
+    @Test
+    public void testFibonacci() {
+        assertEquals(5, Fibonacci.fibonacci(5));
     }
 }

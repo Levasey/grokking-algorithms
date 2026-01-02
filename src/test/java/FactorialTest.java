@@ -1,8 +1,12 @@
 import chapter03.recursion.Factorial;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class FactorialTest {
-    public static void main(String[] args) {
-        int res = Factorial.factorial(5);
-        System.out.println(res == (5 * 4 * 3 * 2 * 1));
+
+    @Test
+    public void testFactorial() {
+        assertEquals(15, Factorial.factorial(5));
     }
 }
