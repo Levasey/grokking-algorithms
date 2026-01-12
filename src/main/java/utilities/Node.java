@@ -3,31 +3,31 @@ package utilities;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Node {
-    private final int value;
-    private boolean visited;
-    private List<Node> children;
+public class Node implements Comparable<Node> {
+    private final String name; // Для наглядности используем имя
+    private List<Edge> edges = new ArrayList<>();
+    private int distance = Integer.MAX_VALUE; // Начальное расстояние — бесконечность
+    private Node previous = null; // Для восстановления пути
 
-    public Node(int value) {
-        this.value = value;
-        this.visited = false;
-        this.children = new ArrayList<Node>();
-    }
-
-    public void addChild(Node child) {
-        this.children.add(child);
+    public Node(String name) {
+        this.name = name;
     }
 
-    public int getValue() {
-        return value;
+    public void addEdge(Node target, int weight) {
+        edges.add(new Edge(target, weight));
     }
-    public boolean isVisited() {
-        return visited;
+
+    // Метод для сравнения узлов в PriorityQueue по дистанции
+    @Override
+    public int compareTo(Node other) {
+        return Integer.compare(this.distance, other.distance);
     }
-    public void setVisited(boolean visited) {
-        this.visited = visited;
-    }
-    public List<Node> getChildren() {
-        return children;
-    }
+
+    // Геттеры и сеттеры
+    public int getDistance() { return distance; }
+    public void setDistance(int distance) { this.distance = distance; }
+    public List<Edge> getEdges() { return edges; }
+    public Node getPrevious() { return previous; }
+    public void setPrevious(Node previous) { this.previous = previous; }
+    public String getName() { return name; }
 }

@@ -1,39 +1,65 @@
 package chapter07.deabthFirstSearch;
 
+import utilities.Edge;
 import utilities.Node;
 
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class DepthFirstSearch {
-    // Рекурсивный DFS для графа в виде списка смежности (List<List<Integer>>)
-    public static void dfs(int node, List<List<Integer>> graph, boolean[] visited) {
-        // Помечаем текущую вершину как посещенную
-        visited[node] = true;
-        System.out.print(node + " ");
+    /**
+     * Рекурсивная реализация DFS
+     */
+    public static void performRecursiveDFS(Node startNode) {
+        if (startNode == null) {
+            System.out.println("Стартовый узел не может быть null");
+            return;
+        }
 
-        // Рекурсивно посещаем всех соседей
-        for (int neighbor : graph.get(node)) {
-            if (!visited[neighbor]) {
-                dfs(neighbor, graph, visited);
+        Set<Node> visited = new HashSet<>();
+        resetNodes(Collections.singletonList(startNode));
+        startNode.setDistance(0);
+
+        System.out.println("Порядок обхода DFS (рекурсивный):");
+
+        AtomicInteger step = new AtomicInteger(1);
+        recursiveDFSHelper(startNode, visited, step);
+
+        System.out.println("\nРекурсивный DFS завершен. Всего посещено узлов: " + visited.size());
+    }
+
+    /**
+     * Вспомогательный метод для рекурсивного DFS
+     */
+    private static void recursiveDFSHelper(Node currentNode, Set<Node> visited, AtomicInteger step) {
+        // Помечаем текущий узел как посещенный
+        visited.add(currentNode);
+
+        // Выводим информацию о текущем узле
+        System.out.printf("%d. Узел: %s, Глубина: %d%n",
+                step.getAndIncrement(),
+                currentNode.getName(),
+                currentNode.getDistance());
+
+        // Рекурсивно посещаем всех непосещенных соседей
+        for (Edge edge : currentNode.getEdges()) {
+            Node neighbor = edge.getTarget();
+
+            if (!visited.contains(neighbor)) {
+                neighbor.setDistance(currentNode.getDistance() + 1);
+                neighbor.setPrevious(currentNode);
+                recursiveDFSHelper(neighbor, visited, step);
             }
         }
     }
 
-    // Рекурсивный DFS для объектов Node
-    public static void dfsRecursive(Node node) {
-        if (node == null || node.isVisited()) {
-            return;
-        }
-
-        // Помечаем текущую вершину как посещенную
-        node.setVisited(true);
-        System.out.print(node.getValue() + " ");
-
-        // Рекурсивно посещаем всех соседей
-        for (Node child : node.getChildren()) {
-            if (!child.isVisited()) {
-                dfsRecursive(child);
-            }
+    /**
+     * Сброс состояния всех узлов
+     */
+    private static void resetNodes(Collection<Node> nodes) {
+        for (Node node : nodes) {
+            node.setDistance(Integer.MAX_VALUE);
+            node.setPrevious(null);
         }
     }
 }
