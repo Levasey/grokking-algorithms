@@ -1,5 +1,6 @@
 package utilities;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,6 +27,6 @@ public class Graph {
     }
 
     public List<Node> getNodes() {
-        return nodes;
+        return Collections.unmodifiableList(nodes);
     }
 }

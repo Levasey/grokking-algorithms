@@ -1,6 +1,7 @@
 package utilities;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Node implements Comparable<Node> {
@@ -26,7 +27,9 @@ public class Node implements Comparable<Node> {
     // Геттеры и сеттеры
     public int getDistance() { return distance; }
     public void setDistance(int distance) { this.distance = distance; }
-    public List<Edge> getEdges() { return edges; }
+    public List<Edge> getEdges() {
+        return Collections.unmodifiableList(edges);
+    }
     public Node getPrevious() { return previous; }
     public void setPrevious(Node previous) { this.previous = previous; }
     public String getName() { return name; }
