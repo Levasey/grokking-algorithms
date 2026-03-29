@@ -61,14 +61,9 @@ class BreadthFirstSearchTest {
     @Test
     @DisplayName("Тест BFS с null начальным узлом")
     void testBFSWithNullStartNode() {
-        // Capture System.out for testing
-        final java.io.ByteArrayOutputStream outContent = new java.io.ByteArrayOutputStream();
-        System.setOut(new java.io.PrintStream(outContent));
-
-        performBFS(null);
-
-        assertTrue(outContent.toString().contains("Стартовый узел не может быть null"));
-        System.setOut(System.out); // Reset System.out
+        List<String> lines = new ArrayList<>();
+        assertEquals(0, performBFS(null, lines::add));
+        assertTrue(String.join("\n", lines).contains("Стартовый узел не может быть null"));
     }
 
     @Test
@@ -76,28 +71,22 @@ class BreadthFirstSearchTest {
     void testBFSWithSingleNode() {
         Node singleNode = new Node("Single");
 
-        final java.io.ByteArrayOutputStream outContent = new java.io.ByteArrayOutputStream();
-        System.setOut(new java.io.PrintStream(outContent));
+        List<String> lines = new ArrayList<>();
+        assertEquals(1, performBFS(singleNode, lines::add));
 
-        performBFS(singleNode);
-
-        String output = outContent.toString();
+        String output = String.join("\n", lines);
         assertTrue(output.contains("Узел: Single"));
         assertTrue(output.contains("Расстояние от старта: 0"));
         assertTrue(output.contains("Всего посещено узлов: 1"));
-
-        System.setOut(System.out);
     }
 
     @Test
     @DisplayName("Тест BFS обходит все узлы в графе")
     void testBFSVisitsAllNodes() {
-        final java.io.ByteArrayOutputStream outContent = new java.io.ByteArrayOutputStream();
-        System.setOut(new java.io.PrintStream(outContent));
+        List<String> lines = new ArrayList<>();
+        assertEquals(6, performBFS(nodeA, lines::add));
 
-        performBFS(nodeA);
-
-        String output = outContent.toString();
+        String output = String.join("\n", lines);
 
         // Проверяем, что все узлы были посещены
         assertTrue(output.contains("Узел: A"));
@@ -109,15 +98,13 @@ class BreadthFirstSearchTest {
 
         // Проверяем общее количество посещенных узлов
         assertTrue(output.contains("Всего посещено узлов: 6"));
-
-        System.setOut(System.out);
     }
 
     @Test
     @DisplayName("Тест BFS устанавливает правильные расстояния")
     void testBFSSetsCorrectDistances() {
         // Выполняем BFS
-        performBFS(nodeA);
+        performBFS(nodeA, null);
 
         // Проверяем расстояния
         assertEquals(0, nodeA.getDistance());
@@ -131,7 +118,7 @@ class BreadthFirstSearchTest {
     @Test
     @DisplayName("Тест BFS устанавливает правильные предыдущие узлы")
     void testBFSSetsCorrectPreviousNodes() {
-        performBFS(nodeA);
+        performBFS(nodeA, null);
 
         // Проверяем предыдущие узлы
         assertNull(nodeA.getPrevious());
@@ -146,7 +133,7 @@ class BreadthFirstSearchTest {
     @Test
     @DisplayName("Тест восстановления пути")
     void testGetPathTo() {
-        performBFS(nodeA);
+        performBFS(nodeA, null);
 
         // Путь от A к D
         List<Node> pathToD = getPathTo(nodeD);
@@ -169,7 +156,7 @@ class BreadthFirstSearchTest {
     @Test
     @DisplayName("Тест печати пути")
     void testPrintPath() {
-        performBFS(nodeA);
+        performBFS(nodeA, null);
 
         final java.io.ByteArrayOutputStream outContent = new java.io.ByteArrayOutputStream();
         System.setOut(new java.io.PrintStream(outContent));
@@ -234,17 +221,13 @@ class BreadthFirstSearchTest {
         disconnectedGraph.addNode(isolated1);
         disconnectedGraph.addNode(isolated2);
 
-        final java.io.ByteArrayOutputStream outContent = new java.io.ByteArrayOutputStream();
-        System.setOut(new java.io.PrintStream(outContent));
+        List<String> lines = new ArrayList<>();
+        assertEquals(1, performBFS(isolated1, lines::add));
 
-        performBFS(isolated1);
-
-        String output = outContent.toString();
+        String output = String.join("\n", lines);
         assertTrue(output.contains("Узел: Isolated1"));
         assertFalse(output.contains("Узел: Isolated2")); // Не должен быть посещен
         assertTrue(output.contains("Всего посещено узлов: 1"));
-
-        System.setOut(System.out);
     }
 
     @Test
@@ -264,7 +247,7 @@ class BreadthFirstSearchTest {
         completeGraph.addEdge(k1, k3);
         completeGraph.addEdge(k2, k3);
 
-        performBFS(k1);
+        performBFS(k1, null);
 
         assertEquals(0, k1.getDistance());
         assertEquals(1, k2.getDistance());
@@ -293,7 +276,7 @@ class BreadthFirstSearchTest {
         w1.addEdge(w3, 1);  // Вес 1
 
         // BFS найдет путь через любое ребро, независимо от веса
-        performBFS(w1);
+        performBFS(w1, null);
 
         // Оба соседа должны быть на расстоянии 1
         assertEquals(1, w2.getDistance());
@@ -328,12 +311,10 @@ class BreadthFirstSearchTest {
         levelGraph.addEdge(b, d);
         levelGraph.addEdge(c, e);
 
-        final java.io.ByteArrayOutputStream outContent = new java.io.ByteArrayOutputStream();
-        System.setOut(new java.io.PrintStream(outContent));
+        List<String> lines = new ArrayList<>();
+        performBFS(a, lines::add);
 
-        performBFS(a);
-
-        String output = outContent.toString();
+        String output = String.join("\n", lines);
 
         // Проверяем порядок вывода (примерный паттерн)
         // A (уровень 0), затем B и C (уровень 1), затем D и E (уровень 2)
@@ -349,8 +330,6 @@ class BreadthFirstSearchTest {
         // B и C должны быть после A, но до D и E
         assertTrue(indexB > indexA && indexC > indexA);
         assertTrue(indexB < indexD && indexC < indexE);
-
-        System.setOut(System.out);
     }
 
     @Test
@@ -372,12 +351,10 @@ class BreadthFirstSearchTest {
             linearGraph.addEdge(nodes.get(i), nodes.get(i + 1));
         }
 
-        final java.io.ByteArrayOutputStream outContent = new java.io.ByteArrayOutputStream();
-        System.setOut(new java.io.PrintStream(outContent));
+        List<String> lines = new ArrayList<>();
+        assertEquals(100, performBFS(nodes.get(0), lines::add));
 
-        performBFS(nodes.get(0));
-
-        String output = outContent.toString();
+        String output = String.join("\n", lines);
 
         // Проверяем, что все узлы были посещены
         assertTrue(output.contains("Всего посещено узлов: 100"));
@@ -385,22 +362,20 @@ class BreadthFirstSearchTest {
         // Проверяем расстояния для последнего узла
         Node lastNode = nodes.get(nodes.size() - 1);
         assertEquals(99, lastNode.getDistance());
-
-        System.setOut(System.out);
     }
 
     @Test
     @DisplayName("Тест повторного использования BFS")
     void testBFSReuse() {
         // Первый запуск BFS
-        performBFS(nodeA);
+        performBFS(nodeA, null);
         int distanceFirst = nodeD.getDistance();
 
         // Сбрасываем узлы
         resetNodes();
 
         // Второй запуск BFS с другого узла
-        performBFS(nodeD);
+        performBFS(nodeD, null);
         int distanceSecond = nodeA.getDistance();
 
         // Проверяем симметричность (для неориентированного графа)
@@ -417,18 +392,14 @@ class BreadthFirstSearchTest {
         // что создаст петлю
         selfLoopNode.addEdge(selfLoopNode, 1);
 
-        final java.io.ByteArrayOutputStream outContent = new java.io.ByteArrayOutputStream();
-        System.setOut(new java.io.PrintStream(outContent));
+        List<String> lines = new ArrayList<>();
+        performBFS(selfLoopNode, lines::add);
 
-        performBFS(selfLoopNode);
-
-        String output = outContent.toString();
+        String output = String.join("\n", lines);
 
         // Узел должен быть посещен только один раз
         int count = countOccurrences(output, "Узел: SelfLoop");
         assertEquals(1, count);
-
-        System.setOut(System.out);
     }
 
     private int countOccurrences(String text, String pattern) {
@@ -461,7 +432,7 @@ class BreadthFirstSearchTest {
         }
 
         long startTime = System.currentTimeMillis();
-        performBFS(center);
+        performBFS(center, null);
         long endTime = System.currentTimeMillis();
 
         long duration = endTime - startTime;

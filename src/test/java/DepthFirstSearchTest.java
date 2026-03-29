@@ -3,8 +3,7 @@ import org.junit.jupiter.api.Test;
 import utilities.Graph;
 import utilities.Node;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -13,32 +12,24 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class DepthFirstSearchTest {
 
-    private static void withCapturedOut(Runnable body, java.util.function.Consumer<String> assertOutput) {
-        PrintStream original = System.out;
-        try {
-            ByteArrayOutputStream buf = new ByteArrayOutputStream();
-            System.setOut(new PrintStream(buf));
-            body.run();
-            assertOutput.accept(buf.toString());
-        } finally {
-            System.setOut(original);
-        }
+    private static String joinLog(List<String> lines) {
+        return String.join("\n", lines);
     }
 
     @Test
     @DisplayName("DFS с null-графом")
     void nullGraphMessage() {
-        withCapturedOut(
-                () -> performRecursiveDFS((Graph) null, new Node("n")),
-                out -> assertTrue(out.contains("Граф не может быть null")));
+        List<String> lines = new ArrayList<>();
+        assertEquals(0, performRecursiveDFS((Graph) null, new Node("n"), lines::add));
+        assertTrue(joinLog(lines).contains("Граф не может быть null"));
     }
 
     @Test
     @DisplayName("DFS с null-коллекцией узлов")
     void nullCollectionMessage() {
-        withCapturedOut(
-                () -> performRecursiveDFS((List<Node>) null, new Node("n")),
-                out -> assertTrue(out.contains("Коллекция узлов не может быть null")));
+        List<String> lines = new ArrayList<>();
+        assertEquals(0, performRecursiveDFS((List<Node>) null, new Node("n"), lines::add));
+        assertTrue(joinLog(lines).contains("Коллекция узлов не может быть null"));
     }
 
     @Test
@@ -47,9 +38,9 @@ class DepthFirstSearchTest {
         Graph g = new Graph();
         Node a = new Node("A");
         g.addNode(a);
-        withCapturedOut(
-                () -> performRecursiveDFS(g, null),
-                out -> assertTrue(out.contains("Стартовый узел не может быть null")));
+        List<String> lines = new ArrayList<>();
+        assertEquals(0, performRecursiveDFS(g, null, lines::add));
+        assertTrue(joinLog(lines).contains("Стартовый узел не может быть null"));
     }
 
     @Test
@@ -57,9 +48,9 @@ class DepthFirstSearchTest {
     void startNotInAllNodesMessage() {
         Node a = new Node("A");
         Node b = new Node("B");
-        withCapturedOut(
-                () -> performRecursiveDFS(List.of(a), b),
-                out -> assertTrue(out.contains("Стартовый узел должен входить в коллекцию всех узлов графа")));
+        List<String> lines = new ArrayList<>();
+        assertEquals(0, performRecursiveDFS(List.of(a), b, lines::add));
+        assertTrue(joinLog(lines).contains("Стартовый узел должен входить в коллекцию всех узлов графа"));
     }
 
     @Test
@@ -82,8 +73,9 @@ class DepthFirstSearchTest {
         y.setDistance(4);
         y.setPrevious(x);
 
-        withCapturedOut(() -> performRecursiveDFS(g, a), out ->
-                assertTrue(out.contains("Всего посещено узлов: 2")));
+        List<String> lines = new ArrayList<>();
+        assertEquals(2, performRecursiveDFS(g, a, lines::add));
+        assertTrue(joinLog(lines).contains("Всего посещено узлов: 2"));
 
         assertEquals(0, a.getDistance());
         assertEquals(1, b.getDistance());
@@ -109,12 +101,14 @@ class DepthFirstSearchTest {
         g.addEdge(a, b);
         g.addEdge(x, y);
 
-        withCapturedOut(() -> performRecursiveDFS(g, a), out ->
-                assertTrue(out.contains("Всего посещено узлов: 2")));
+        List<String> lines1 = new ArrayList<>();
+        assertEquals(2, performRecursiveDFS(g, a, lines1::add));
+        assertTrue(joinLog(lines1).contains("Всего посещено узлов: 2"));
         assertEquals(0, a.getDistance());
 
-        withCapturedOut(() -> performRecursiveDFS(g, x), out ->
-                assertTrue(out.contains("Всего посещено узлов: 2")));
+        List<String> lines2 = new ArrayList<>();
+        assertEquals(2, performRecursiveDFS(g, x, lines2::add));
+        assertTrue(joinLog(lines2).contains("Всего посещено узлов: 2"));
 
         assertEquals(Integer.MAX_VALUE, a.getDistance());
         assertNull(a.getPrevious());
@@ -136,29 +130,16 @@ class DepthFirstSearchTest {
         g.addNode(b);
         g.addEdge(a, b);
 
-        String outGraph;
-        PrintStream original = System.out;
-        try {
-            ByteArrayOutputStream buf = new ByteArrayOutputStream();
-            System.setOut(new PrintStream(buf));
-            performRecursiveDFS(g, a);
-            outGraph = buf.toString();
-        } finally {
-            System.setOut(original);
-        }
+        List<String> fromGraph = new ArrayList<>();
+        assertEquals(2, performRecursiveDFS(g, a, fromGraph::add));
+        String outGraph = joinLog(fromGraph);
 
         b.setDistance(99);
         b.setPrevious(null);
 
-        String outList;
-        try {
-            ByteArrayOutputStream buf = new ByteArrayOutputStream();
-            System.setOut(new PrintStream(buf));
-            performRecursiveDFS(g.getNodes(), a);
-            outList = buf.toString();
-        } finally {
-            System.setOut(original);
-        }
+        List<String> fromList = new ArrayList<>();
+        assertEquals(2, performRecursiveDFS(g.getNodes(), a, fromList::add));
+        String outList = joinLog(fromList);
 
         assertEquals(outGraph, outList);
         assertEquals(0, a.getDistance());
@@ -178,11 +159,12 @@ class DepthFirstSearchTest {
         graph.addEdge(nodeA, nodeB);
         graph.addEdge(nodeB, nodeC);
 
-        withCapturedOut(() -> performRecursiveDFS(graph, nodeA), out -> {
-            assertTrue(out.contains("Всего посещено узлов: 3"));
-            for (Node n : Arrays.asList(nodeA, nodeB, nodeC)) {
-                assertTrue(out.contains("Узел: " + n.getName()));
-            }
-        });
+        List<String> lines = new ArrayList<>();
+        assertEquals(3, performRecursiveDFS(graph, nodeA, lines::add));
+        String out = joinLog(lines);
+        assertTrue(out.contains("Всего посещено узлов: 3"));
+        for (Node n : Arrays.asList(nodeA, nodeB, nodeC)) {
+            assertTrue(out.contains("Узел: " + n.getName()));
+        }
     }
 }

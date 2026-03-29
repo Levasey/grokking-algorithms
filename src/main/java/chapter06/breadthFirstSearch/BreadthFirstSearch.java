@@ -3,60 +3,67 @@ package chapter06.breadthFirstSearch;
 import utilities.Node;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 public class BreadthFirstSearch {
+
+    /**
+     * BFS с выводом в консоль (удобно для демо и учебных примеров).
+     */
     public static void performBFS(Node startNode) {
-        // Проверяем, что стартовый узел не null
+        performBFS(startNode, System.out::println);
+    }
+
+    /**
+     * BFS с опциональным потребителем строк лога. Каждая строка — то, что в консольном режиме
+     * ушло бы в отдельный {@code println}. {@code log == null} — только алгоритм, без логирования.
+     *
+     * @return число посещённых узлов, или 0 если стартовый узел {@code null}
+     */
+    public static int performBFS(Node startNode, Consumer<String> log) {
+        Consumer<String> sink = log != null ? log : s -> {};
         if (startNode == null) {
-            System.out.println("Стартовый узел не может быть null");
-            return;
+            sink.accept("Стартовый узел не может быть null");
+            return 0;
         }
 
-        // Создаем очередь для BFS
+        // Очередь для BFS и множество посещённых узлов
         Queue<Node> queue = new LinkedList<>();
-
-        // Создаем множество для отслеживания посещенных узлов
         Set<Node> visited = new HashSet<>();
 
-        // Инициализируем стартовый узел
         startNode.setDistance(0);
         startNode.setPrevious(null);
 
-        // Добавляем стартовый узел в очередь и отмечаем как посещенный
         queue.add(startNode);
         visited.add(startNode);
 
-        System.out.println("Порядок обхода BFS:");
+        sink.accept("Порядок обхода BFS:");
         int step = 1;
 
-        // Основной цикл BFS
         while (!queue.isEmpty()) {
             Node currentNode = queue.poll();
 
-            // Выводим информацию о текущем узле
-            System.out.printf("%d. Узел: %s, Расстояние от старта: %d%n",
+            sink.accept(String.format("%d. Узел: %s, Расстояние от старта: %d",
                     step++,
                     currentNode.getName(),
-                    currentNode.getDistance());
+                    currentNode.getDistance()));
 
-            // Обрабатываем всех соседей текущего узла
             for (utilities.Edge edge : currentNode.getEdges()) {
                 Node neighbor = edge.getTarget();
 
-                // Если сосед еще не посещен
                 if (!visited.contains(neighbor)) {
-                    // Обновляем расстояние и предыдущий узел
                     neighbor.setDistance(currentNode.getDistance() + 1);
                     neighbor.setPrevious(currentNode);
 
-                    // Добавляем в очередь и отмечаем как посещенный
                     queue.add(neighbor);
                     visited.add(neighbor);
                 }
             }
         }
 
-        System.out.println("\nBFS завершен. Всего посещено узлов: " + visited.size());
+        sink.accept("");
+        sink.accept("BFS завершен. Всего посещено узлов: " + visited.size());
+        return visited.size();
     }
 
     // Дополнительный метод для восстановления пути от стартового узла к целевому
@@ -106,7 +113,6 @@ public class BreadthFirstSearch {
         Queue<Node> queue = new LinkedList<>();
         Set<Node> visited = new HashSet<>();
 
-        // Инициализация
         startNode.setDistance(0);
         startNode.setPrevious(null);
         queue.add(startNode);
@@ -115,12 +121,10 @@ public class BreadthFirstSearch {
         while (!queue.isEmpty()) {
             Node currentNode = queue.poll();
 
-            // Если нашли целевой узел
             if (targetName.equals(currentNode.getName())) {
                 return currentNode;
             }
 
-            // Обрабатываем соседей
             for (utilities.Edge edge : currentNode.getEdges()) {
                 Node neighbor = edge.getTarget();
 
