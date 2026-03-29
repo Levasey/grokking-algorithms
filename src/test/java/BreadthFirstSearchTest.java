@@ -258,11 +258,6 @@ class BreadthFirstSearchTest {
         assertEquals(k1, k3.getPrevious());
     }
 
-    private Node findNodeByName(Node startNode, String name) {
-        // Выполняем поиск узла по имени с помощью BFS
-        return findNodeBFS(startNode, name);
-    }
-
     @Test
     @DisplayName("Тест BFS на графе с весом ребер")
     void testBFSOnWeightedGraph() {
