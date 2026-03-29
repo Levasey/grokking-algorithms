@@ -1,23 +1,50 @@
 package chapter07.depthFirstSearch;
 
 import utilities.Edge;
+import utilities.Graph;
 import utilities.Node;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class DepthFirstSearch {
     /**
-     * Рекурсивная реализация DFS
+     * Рекурсивный DFS. Перед обходом сбрасывает distance/previous у всех узлов графа,
+     * чтобы повторные запуски на тех же экземплярах {@link Node} не оставляли мусор
+     * в узлах из других компонент или не посещённых при прошлом обходе.
      */
-    public static void performRecursiveDFS(Node startNode) {
+    public static void performRecursiveDFS(Graph graph, Node startNode) {
+        if (graph == null) {
+            System.out.println("Граф не может быть null");
+            return;
+        }
+        performRecursiveDFS(graph.getNodes(), startNode);
+    }
+
+    /**
+     * Рекурсивный DFS по коллекции всех узлов графа (с полным сбросом их состояния).
+     *
+     * @param allNodes  все вершины графа; узлы вне этой коллекции не сбрасываются
+     * @param startNode старт обхода, должен входить в {@code allNodes}
+     */
+    public static void performRecursiveDFS(Collection<Node> allNodes, Node startNode) {
+        if (allNodes == null) {
+            System.out.println("Коллекция узлов не может быть null");
+            return;
+        }
         if (startNode == null) {
             System.out.println("Стартовый узел не может быть null");
             return;
         }
+        if (!allNodes.contains(startNode)) {
+            System.out.println("Стартовый узел должен входить в коллекцию всех узлов графа");
+            return;
+        }
 
         Set<Node> visited = new HashSet<>();
-        resetNodes(Collections.singletonList(startNode));
+        resetNodes(allNodes);
         startNode.setDistance(0);
 
         System.out.println("Порядок обхода DFS (рекурсивный):");
