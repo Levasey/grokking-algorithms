@@ -22,7 +22,7 @@
 - `chapter03.recursion/` — Рекурсия, стек вызовов, факториал, числа Фибоначчи.
 - `chapter04.quicksort/` — Быстрая сортировка, стратегия "разделяй и властвуй".
 - `chapter06.breadthFirstSearch/` — Поиск в ширину (BFS), графы.
-- `chapter07.deabthFirstSearch/` — Поиск в глубину, деревья.
+- `chapter07.depthFirstSearch/` — Поиск в глубину, деревья.
 - `chapter09.dijkstra/` — Алгоритм Дейкстры.
 - `chapter10.greedyAlgorithms/` — Жадные алгоритмы (задача о покрытии множества).
 - `chapter11.dynamicProgramming/` — Динамическое программирование (задача о рюкзаке, самая длинная общая подпоследовательность).

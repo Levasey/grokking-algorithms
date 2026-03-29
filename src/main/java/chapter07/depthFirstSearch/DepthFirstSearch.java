@@ -1,4 +1,4 @@
-package chapter07.deabthFirstSearch;
+package chapter07.depthFirstSearch;
 
 import utilities.Edge;
 import utilities.Node;
