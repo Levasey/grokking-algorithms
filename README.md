@@ -4,6 +4,7 @@
 
 [![Java](https://img.shields.io/badge/Java-24-007396?logo=openjdk)](https://openjdk.java.net/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![CI](https://github.com/Levasey/grokking-algorithms/actions/workflows/ci.yml/badge.svg)](https://github.com/Levasey/grokking-algorithms/actions/workflows/ci.yml)
 
 ## 📚 О проекте
 
