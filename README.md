@@ -34,6 +34,7 @@
   - `chapter13.invertedIndex/` — инвертированный индекс, поиск по терминам и комбинациям (И / ИЛИ): `add`, статические `buildParallel` для параллельной индексации списка документов.
   - `chapter13.fourier/` — ДПФ для произвольной длины и БПФ Cooley–Tukey (основание 2) для длин — степень двойки; прямые и обратные преобразования; параллельные варианты `parallelDft`, `parallelInverseDft`, `parallelFft`, `parallelInverseFft` на общем `ForkJoinPool`.
   - `chapter13.parallel/` — учебные примитивы в духе map/reduce: `ParallelMapReduce.parallelSum`, `mapReduce`.
+  - `chapter13.distributed/` — распределённые идеи в учебной форме: `LamportClock`, `VectorClock`, симуляция выборов лидера `BullyLeaderElection`, симуляция MapReduce `DistributedWordCount`.
 - `utilities/` — Общие структуры данных (Граф, Узел, Рёбра и т.д.).
 
 ## 🚀 Как запустить
