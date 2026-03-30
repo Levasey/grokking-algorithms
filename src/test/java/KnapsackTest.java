@@ -28,7 +28,7 @@ public class KnapsackTest {
                 new Item(3, 2000),
                 new Item(1, 2000)
         );
-        assertEquals(3500, Knapsack.maxValue(4, items));
+        assertEquals(4000, Knapsack.maxValue(4, items));
     }
 
     @Test
@@ -47,8 +47,8 @@ public class KnapsackTest {
             sumV += items.get(i).value();
         }
         assertEquals(4, sumW);
-        assertEquals(3500, sumV);
-        assertEquals(3500, Knapsack.maxValue(4, items));
+        assertEquals(4000, sumV);
+        assertEquals(4000, Knapsack.maxValue(4, items));
     }
 
     @Test

@@ -2,6 +2,8 @@ package chapter13.linearRegression;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.concurrent.atomic.DoubleAdder;
+import java.util.stream.IntStream;
 
 /**
  * Линейная регрессия: модель {@code y ≈ w₀ + w₁·x₁ + … + wₙ·xₙ}.
@@ -97,6 +99,83 @@ public final class LinearRegression {
             double maxDelta = 0;
             for (int j = 0; j < dim; j++) {
                 double step = learningRate * grad[j];
+                w[j] -= step;
+                maxDelta = Math.max(maxDelta, Math.abs(step));
+            }
+
+            if (maxDelta < epsilon) {
+                iter++;
+                break;
+            }
+        }
+
+        return new FitResult(Arrays.copyOf(w, w.length), iter);
+    }
+
+    /**
+     * То же, что {@link #train}, но вычисление предсказаний и частичных градиентов по объектам выполняется параллельно
+     * (общий пул форков). Численно совпадает с последовательной версией при той же арифметике IEEE-754.
+     */
+    public static FitResult trainParallel(double[][] x, double[] y, double learningRate, int maxIterations, double epsilon) {
+        Objects.requireNonNull(x, "x");
+        Objects.requireNonNull(y, "y");
+        if (x.length == 0) {
+            throw new IllegalArgumentException("x must be non-empty");
+        }
+        if (x.length != y.length) {
+            throw new IllegalArgumentException("x and y must have the same number of rows");
+        }
+        if (learningRate <= 0 || Double.isNaN(learningRate)) {
+            throw new IllegalArgumentException("learningRate must be positive");
+        }
+        if (maxIterations <= 0) {
+            throw new IllegalArgumentException("maxIterations must be positive");
+        }
+        if (epsilon < 0 || Double.isNaN(epsilon)) {
+            throw new IllegalArgumentException("epsilon must be non-negative");
+        }
+
+        int m = x.length;
+        int n = x[0].length;
+        for (int i = 1; i < m; i++) {
+            if (x[i].length != n) {
+                throw new IllegalArgumentException("all feature rows must have the same length");
+            }
+        }
+
+        int dim = n + 1;
+        double[] w = new double[dim];
+        double[] pred = new double[m];
+
+        int iter = 0;
+        for (; iter < maxIterations; iter++) {
+            IntStream.range(0, m).parallel().forEach(i -> {
+                double pi = w[0];
+                double[] row = x[i];
+                for (int j = 0; j < n; j++) {
+                    pi += w[j + 1] * row[j];
+                }
+                pred[i] = pi;
+            });
+
+            DoubleAdder[] adders = new DoubleAdder[dim];
+            for (int j = 0; j < dim; j++) {
+                adders[j] = new DoubleAdder();
+            }
+            IntStream.range(0, m).parallel().forEach(i -> {
+                double err = pred[i] - y[i];
+                adders[0].add(err);
+                double[] row = x[i];
+                for (int j = 0; j < n; j++) {
+                    adders[j + 1].add(err * row[j]);
+                }
+            });
+
+            double invM = 1.0 / m;
+            double maxDelta = 0;
+            for (int j = 0; j < dim; j++) {
+                double g = adders[j].sum() * invM;
+                double step = learningRate * g;
                 w[j] -= step;
                 maxDelta = Math.max(maxDelta, Math.abs(step));
             }

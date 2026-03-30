@@ -1,5 +1,7 @@
 import chapter13.invertedIndex.InvertedIndex;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -85,5 +87,35 @@ public class InvertedIndexTest {
     @Test
     void add_rejectsNullText() {
         assertThrows(NullPointerException.class, () -> index.add("id", null));
+    }
+
+    @Test
+    void buildParallel_matchesSequentialAdds() {
+        InvertedIndex sequential = new InvertedIndex();
+        sequential.add("a", "hello world");
+        sequential.add("b", "hello cat");
+        sequential.add("c", "dog");
+
+        InvertedIndex parallel = InvertedIndex.buildParallel(List.of(
+                Map.entry("a", "hello world"),
+                Map.entry("b", "hello cat"),
+                Map.entry("c", "dog")));
+
+        assertEquals(sequential.documentsWithTerm("hello"), parallel.documentsWithTerm("hello"));
+        assertEquals(sequential.documentsWithTerm("cat"), parallel.documentsWithTerm("cat"));
+        assertEquals(sequential.documentsWithAllTerms("hello", "cat"), parallel.documentsWithAllTerms("hello", "cat"));
+    }
+
+    @Test
+    void buildParallel_listOverload_matchesSequential() {
+        InvertedIndex sequential = new InvertedIndex();
+        sequential.add("1", "alpha beta");
+        sequential.add("2", "alpha gamma");
+
+        InvertedIndex parallel = InvertedIndex.buildParallel(
+                List.of("1", "2"),
+                List.of("alpha beta", "alpha gamma"));
+
+        assertEquals(sequential.documentsWithAllTerms("alpha", "beta"), parallel.documentsWithAllTerms("alpha", "beta"));
     }
 }

@@ -2,6 +2,7 @@ package chapter13.fourier;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.stream.IntStream;
 
 /**
  * Дискретное преобразование Фурье (ДПФ) и быстрое преобразование Фурье (БПФ, Cooley–Tukey, основание 2).
@@ -112,6 +113,92 @@ public final class FourierTransform {
         return a;
     }
 
+    /**
+     * ДПФ с параллельным вычислением по частотам {@code k}; даёт тот же результат, что {@link #dft(double[])}.
+     */
+    public static Complex[] parallelDft(double[] signal) {
+        Objects.requireNonNull(signal, "signal");
+        if (signal.length == 0) {
+            throw new IllegalArgumentException("signal must be non-empty");
+        }
+        int n = signal.length;
+        double twoPiOverN = 2.0 * Math.PI / n;
+        Complex[] out = new Complex[n];
+        IntStream.range(0, n).parallel().forEach(k -> {
+            double sumRe = 0;
+            double sumIm = 0;
+            for (int t = 0; t < n; t++) {
+                double angle = -twoPiOverN * k * t;
+                double c = Math.cos(angle);
+                double s = Math.sin(angle);
+                double x = signal[t];
+                sumRe += x * c;
+                sumIm += x * s;
+            }
+            out[k] = new Complex(sumRe, sumIm);
+        });
+        return out;
+    }
+
+    /**
+     * Обратное ДПФ; параллельно по индексу времени {@code t}.
+     */
+    public static Complex[] parallelInverseDft(Complex[] spectrum) {
+        Objects.requireNonNull(spectrum, "spectrum");
+        if (spectrum.length == 0) {
+            throw new IllegalArgumentException("spectrum must be non-empty");
+        }
+        int n = spectrum.length;
+        double twoPiOverN = 2.0 * Math.PI / n;
+        double invN = 1.0 / n;
+        Complex[] out = new Complex[n];
+        IntStream.range(0, n).parallel().forEach(t -> {
+            double sumRe = 0;
+            double sumIm = 0;
+            for (int k = 0; k < n; k++) {
+                double angle = twoPiOverN * k * t;
+                double c = Math.cos(angle);
+                double s = Math.sin(angle);
+                Complex sk = spectrum[k];
+                sumRe += sk.re * c - sk.im * s;
+                sumIm += sk.re * s + sk.im * c;
+            }
+            out[t] = new Complex(sumRe * invN, sumIm * invN);
+        });
+        return out;
+    }
+
+    /**
+     * БПФ; на каждом этапе бабочки независимые блоки длины {@code len} обрабатываются параллельно.
+     */
+    public static Complex[] parallelFft(double[] signal) {
+        Objects.requireNonNull(signal, "signal");
+        if (signal.length == 0) {
+            throw new IllegalArgumentException("signal must be non-empty");
+        }
+        requirePowerOfTwo(signal.length);
+        Complex[] a = new Complex[signal.length];
+        for (int i = 0; i < signal.length; i++) {
+            a[i] = new Complex(signal[i], 0);
+        }
+        parallelFftInPlace(a, false);
+        return a;
+    }
+
+    /**
+     * Обратное БПФ (параллельные этапы бабочек).
+     */
+    public static Complex[] parallelInverseFft(Complex[] spectrum) {
+        Objects.requireNonNull(spectrum, "spectrum");
+        if (spectrum.length == 0) {
+            throw new IllegalArgumentException("spectrum must be non-empty");
+        }
+        requirePowerOfTwo(spectrum.length);
+        Complex[] a = Arrays.copyOf(spectrum, spectrum.length);
+        parallelFftInPlace(a, true);
+        return a;
+    }
+
     private static void requirePowerOfTwo(int n) {
         if (n <= 0 || (n & (n - 1)) != 0) {
             throw new IllegalArgumentException("length must be a positive power of two");
@@ -128,32 +215,66 @@ public final class FourierTransform {
             double wlenRe = Math.cos(ang);
             double wlenIm = Math.sin(ang);
             for (int i = 0; i < n; i += len) {
-                double wRe = 1.0;
-                double wIm = 0.0;
-                int half = len >>> 1;
-                for (int j = 0; j < half; j++) {
-                    int i1 = i + j;
-                    int i2 = i1 + half;
-                    Complex u = a[i1];
-                    Complex v = a[i2];
-                    double vr = v.re * wRe - v.im * wIm;
-                    double vi = v.re * wIm + v.im * wRe;
-                    a[i1] = new Complex(u.re + vr, u.im + vi);
-                    a[i2] = new Complex(u.re - vr, u.im - vi);
-                    double nwRe = wRe * wlenRe - wIm * wlenIm;
-                    double nwIm = wRe * wlenIm + wIm * wlenRe;
-                    wRe = nwRe;
-                    wIm = nwIm;
-                }
+                butterflyBlock(a, len, i, wlenRe, wlenIm);
             }
         }
 
         if (inverse) {
-            double invN = 1.0 / n;
-            for (int i = 0; i < n; i++) {
+            scaleInverse(a, n);
+        }
+    }
+
+    private static void parallelFftInPlace(Complex[] a, boolean inverse) {
+        int n = a.length;
+        bitReversePermute(a);
+
+        int sign = inverse ? 1 : -1;
+        for (int len = 2; len <= n; len <<= 1) {
+            final int stageLen = len;
+            double ang = sign * 2.0 * Math.PI / stageLen;
+            double wlenRe = Math.cos(ang);
+            double wlenIm = Math.sin(ang);
+            int step = stageLen;
+            int numBlocks = n / step;
+            IntStream.range(0, numBlocks).parallel().forEach(block -> {
+                int i = block * step;
+                butterflyBlock(a, stageLen, i, wlenRe, wlenIm);
+            });
+        }
+
+        if (inverse) {
+            IntStream.range(0, n).parallel().forEach(i -> {
                 Complex z = a[i];
-                a[i] = new Complex(z.re * invN, z.im * invN);
-            }
+                a[i] = new Complex(z.re / n, z.im / n);
+            });
+        }
+    }
+
+    private static void butterflyBlock(Complex[] a, int len, int i, double wlenRe, double wlenIm) {
+        double wRe = 1.0;
+        double wIm = 0.0;
+        int half = len >>> 1;
+        for (int j = 0; j < half; j++) {
+            int i1 = i + j;
+            int i2 = i1 + half;
+            Complex u = a[i1];
+            Complex v = a[i2];
+            double vr = v.re * wRe - v.im * wIm;
+            double vi = v.re * wIm + v.im * wRe;
+            a[i1] = new Complex(u.re + vr, u.im + vi);
+            a[i2] = new Complex(u.re - vr, u.im - vi);
+            double nwRe = wRe * wlenRe - wIm * wlenIm;
+            double nwIm = wRe * wlenIm + wIm * wlenRe;
+            wRe = nwRe;
+            wIm = nwIm;
+        }
+    }
+
+    private static void scaleInverse(Complex[] a, int n) {
+        double invN = 1.0 / n;
+        for (int i = 0; i < n; i++) {
+            Complex z = a[i];
+            a[i] = new Complex(z.re * invN, z.im * invN);
         }
     }
 

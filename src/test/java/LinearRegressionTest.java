@@ -68,4 +68,30 @@ public class LinearRegressionTest {
         assertThrows(IllegalArgumentException.class,
                 () -> LinearRegression.predict(new double[]{1, 2}, new double[]{1, 2, 3}));
     }
+
+    @Test
+    public void trainParallel_matchesTrain_oneFeature() {
+        double[][] x = {{0}, {1}, {2}};
+        double[] y = {2, 5, 8};
+        FitResult seq = LinearRegression.train(x, y, 0.15, 50_000, 1e-12);
+        FitResult par = LinearRegression.trainParallel(x, y, 0.15, 50_000, 1e-12);
+        assertEquals(seq.iterations(), par.iterations());
+        assertArrayEquals(seq.weights(), par.weights(), 1e-9);
+    }
+
+    @Test
+    public void trainParallel_matchesTrain_twoFeatures() {
+        double[][] x = {
+                {0, 0},
+                {1, 0},
+                {0, 1},
+                {1, 1},
+                {2, 1}
+        };
+        double[] y = {1, 2, 3, 4, 5};
+        FitResult seq = LinearRegression.train(x, y, 0.08, 100_000, 1e-10);
+        FitResult par = LinearRegression.trainParallel(x, y, 0.08, 100_000, 1e-10);
+        assertEquals(seq.iterations(), par.iterations());
+        assertArrayEquals(seq.weights(), par.weights(), 1e-9);
+    }
 }

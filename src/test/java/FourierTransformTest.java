@@ -69,4 +69,46 @@ public class FourierTransformTest {
     public void dft_rejectsEmpty() {
         assertThrows(IllegalArgumentException.class, () -> FourierTransform.dft(new double[0]));
     }
+
+    @Test
+    public void parallelDft_matchesSequential() {
+        double[] x = {0, 1, 2, 3, 2, 1, 0, -1};
+        Complex[] seq = FourierTransform.dft(x);
+        Complex[] par = FourierTransform.parallelDft(x);
+        for (int k = 0; k < x.length; k++) {
+            assertComplexEquals(seq[k], par[k], 1e-9);
+        }
+    }
+
+    @Test
+    public void parallelInverseDft_matchesSequential() {
+        double[] x = {1, -0.5, 0.25, 0};
+        Complex[] X = FourierTransform.dft(x);
+        Complex[] seq = FourierTransform.inverseDft(X);
+        Complex[] par = FourierTransform.parallelInverseDft(X);
+        for (int n = 0; n < x.length; n++) {
+            assertComplexEquals(seq[n], par[n], 1e-9);
+        }
+    }
+
+    @Test
+    public void parallelFft_matchesFft() {
+        double[] x = {0, 1, 2, 3, 2, 1, 0, -1};
+        Complex[] fft = FourierTransform.fft(x);
+        Complex[] pfft = FourierTransform.parallelFft(x);
+        for (int k = 0; k < x.length; k++) {
+            assertComplexEquals(fft[k], pfft[k], 1e-9);
+        }
+    }
+
+    @Test
+    public void parallelInverseFft_roundTrip() {
+        double[] x = {1, 0, 1, 0};
+        Complex[] X = FourierTransform.parallelFft(x);
+        Complex[] y = FourierTransform.parallelInverseFft(X);
+        for (int n = 0; n < x.length; n++) {
+            assertEquals(x[n], y[n].re(), 1e-9);
+            assertEquals(0.0, y[n].im(), 1e-9);
+        }
+    }
 }
