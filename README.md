@@ -40,6 +40,7 @@
   - `chapter13.hyperLogLog/` — [HyperLogLog](https://en.wikipedia.org/wiki/HyperLogLog): оценка кардинальности (числа различных элементов) с фиксированной памятью `2^precision` регистров; `add`, `estimateCardinality`; параметр `precision` в диапазоне [4, 18]; для малых истинных кардинальностей используется поправка linear counting по числу нулевых регистров. Тесты: `HyperLogLogTest`.
   - `chapter13.httpsDh/` — [протокол Диффи–Хеллмана](https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange) и связь с HTTPS/TLS на учебном уровне: класс `DiffieHellman` (`Parameters` с модулем и образующим, сторона `Party`, общий секрет `sharedSecret`); для примеров — `textbookDemoParameters()` (малые `p` и `g`, не для реальных систем). `HttpsKeyAgreement` имитирует DHE-рукопожатие (эфемерные открытые ключи, одинаковый pre-master у клиента и сервера) и демонстративно выводит два 32-байтовых направленных ключа через SHA-256; это не полный PRF/HKDF TLS 1.2. Для трассировки шагов есть перегрузка `performDheHandshake(random, StringBuilder)`. Тесты: `DiffieHellmanTest`.
   - `chapter13.distributed/` — распределённые идеи в учебной форме: `LamportClock`, `VectorClock`, симуляция выборов лидера `BullyLeaderElection`, симуляция MapReduce `DistributedWordCount`.
+  - `chapter13.heap/` — бинарная мин-куча на массиве (`MinHeap`: `offer`, `peek`, `poll`, сборка из коллекции за O(n)) и приоритетная очередь поверх неё (`PriorityQueue`). Тесты: `MinHeapAndPriorityQueueTest`.
 - `utilities/` — Общие структуры данных (Граф, Узел, Рёбра и т.д.).
 
 ## 🚀 Как запустить
