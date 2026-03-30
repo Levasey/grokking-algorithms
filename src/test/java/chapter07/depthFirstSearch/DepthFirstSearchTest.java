@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static DepthFirstSearch.performRecursiveDFS;
+import static chapter07.depthFirstSearch.DepthFirstSearch.performRecursiveDFS;
 import static org.junit.jupiter.api.Assertions.*;
 
 class DepthFirstSearchTest {

@@ -7,7 +7,7 @@ import utilities.Node;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static BreadthFirstSearch.*;
+import static chapter06.breadthFirstSearch.BreadthFirstSearch.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BreadthFirstSearchTest {
