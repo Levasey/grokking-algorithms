@@ -33,6 +33,7 @@
 - **Глава 13** (финал книги, «куда двигаться дальше», плюс параллельные варианты типичных шагов):
   - `chapter13.linearRegression/` — линейная регрессия, минимизация MSE градиентным спуском: `train`, `trainParallel` (параллельно по объектам выборки, накопление градиента через `DoubleAdder`).
   - `chapter13.invertedIndex/` — инвертированный индекс, поиск по терминам и комбинациям (И / ИЛИ): `add`, статические `buildParallel` для параллельной индексации списка документов.
+  - `chapter13.localitySensitive/` — [локально-чувствительное хеширование](https://en.wikipedia.org/wiki/Locality-sensitive_hashing) (LSH) на базе MinHash для множеств признаков в виде `long` (например, хеши шинглов): `MinHash` строит подпись, `MinHashLshIndex` — индекс с полосами (`add`, `queryCandidates`, `candidateNeighbors`, оценка Жаккара `estimatedJaccard`). Тесты: `MinHashLshIndexTest`.
   - `chapter13.fourier/` — ДПФ для произвольной длины и БПФ Cooley–Tukey (основание 2) для длин — степень двойки; прямые и обратные преобразования; параллельные варианты `parallelDft`, `parallelInverseDft`, `parallelFft`, `parallelInverseFft` на общем `ForkJoinPool`.
   - `chapter13.parallel/` — учебные примитивы в духе map/reduce: `ParallelMapReduce.parallelSum`, `mapReduce`.
   - `chapter13.bloomFilter/` — [фильтр Блума](https://en.wikipedia.org/wiki/Bloom_filter): вероятностное множество без ложноотрицательных ответов; `add`, `mightContain`; размер битовой карты и число хеш-функций подбираются по ожидаемому числу вставок и целевой вероятности ложноположительного срабатывания (есть и явный конструктор с фиксированными `bitSize` и `hashFunctionCount`).
@@ -69,4 +70,4 @@
 
 ### Тесты
 
-В `src/test/java/` лежат JUnit 5-тесты для модулей выше (включая `DiffieHellmanTest` для DH и упрощённого согласования ключей). Полный прогон `mvn test` проверяет согласованность последовательных и параллельных реализаций там, где обе есть (глава 13).
+В `src/test/java/` лежат JUnit 5-тесты для модулей выше (включая `DiffieHellmanTest` для DH и упрощённого согласования ключей, `MinHashLshIndexTest` для LSH). Полный прогон `mvn test` проверяет согласованность последовательных и параллельных реализаций там, где обе есть (глава 13).
