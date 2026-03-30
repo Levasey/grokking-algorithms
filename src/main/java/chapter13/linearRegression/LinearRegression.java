@@ -28,6 +28,12 @@ public final class LinearRegression {
             if (iterations < 0) {
                 throw new IllegalArgumentException("iterations must be non-negative");
             }
+            weights = weights.clone();
+        }
+
+        @Override
+        public double[] weights() {
+            return weights.clone();
         }
     }
 

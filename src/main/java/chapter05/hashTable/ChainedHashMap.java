@@ -6,7 +6,7 @@ import java.util.Objects;
  * Учебная хеш-таблица: коллизии разрешаются связными списками в каждой корзине.
  * При превышении порога загрузки таблица перехешируется — число корзин удваивается.
  */
-public class ChainedHashMap<K, V> {
+public final class ChainedHashMap<K, V> {
 
     private static final float DEFAULT_LOAD_FACTOR = 0.75f;
 

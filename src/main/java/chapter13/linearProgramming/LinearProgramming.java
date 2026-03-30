@@ -44,7 +44,13 @@ public final class LinearProgramming {
             Objects.requireNonNull(status, "status");
             if (status == Status.OPTIMAL) {
                 Objects.requireNonNull(x, "x");
+                x = x.clone();
             }
+        }
+
+        @Override
+        public double[] x() {
+            return x == null ? null : x.clone();
         }
     }
 

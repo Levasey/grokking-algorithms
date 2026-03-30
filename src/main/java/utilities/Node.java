@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 public class Node implements Comparable<Node> {
     /**
      * Значение {@link #distance} для вершины до поиска путей или если вершина из источника недостижима.
@@ -39,13 +41,33 @@ public class Node implements Comparable<Node> {
         return Long.compare(this.distance, other.distance);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Node that)) {
+            return false;
+        }
+        return name.equals(that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+
     // Геттеры и сеттеры
     public long getDistance() { return distance; }
     public void setDistance(long distance) { this.distance = distance; }
     public List<Edge> getEdges() {
         return Collections.unmodifiableList(edges);
     }
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP",
+            justification = "Поле previous используется для цепочки вершин при восстановлении пути.")
     public Node getPrevious() { return previous; }
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2",
+            justification = "Восстановление пути ссылается на вершины того же графа.")
     public void setPrevious(Node previous) { this.previous = previous; }
     public String getName() { return name; }
 }

@@ -44,6 +44,18 @@ public final class HttpsKeyAgreement {
         public SessionKeys {
             Objects.requireNonNull(clientToServerKey, "clientToServerKey");
             Objects.requireNonNull(serverToClientKey, "serverToClientKey");
+            clientToServerKey = clientToServerKey.clone();
+            serverToClientKey = serverToClientKey.clone();
+        }
+
+        @Override
+        public byte[] clientToServerKey() {
+            return clientToServerKey.clone();
+        }
+
+        @Override
+        public byte[] serverToClientKey() {
+            return serverToClientKey.clone();
         }
     }
 

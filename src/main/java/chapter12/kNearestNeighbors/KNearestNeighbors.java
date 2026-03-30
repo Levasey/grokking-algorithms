@@ -30,6 +30,12 @@ public final class KNearestNeighbors {
             if (features.length == 0) {
                 throw new IllegalArgumentException("features must be non-empty");
             }
+            features = features.clone();
+        }
+
+        @Override
+        public double[] features() {
+            return features.clone();
         }
     }
 
@@ -45,6 +51,12 @@ public final class KNearestNeighbors {
             if (features.length == 0) {
                 throw new IllegalArgumentException("features must be non-empty");
             }
+            features = features.clone();
+        }
+
+        @Override
+        public double[] features() {
+            return features.clone();
         }
     }
 
