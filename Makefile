@@ -1,7 +1,7 @@
 # Grokking Algorithms — обёртка над Maven (JDK 24, см. pom.xml).
-# Переопределение: make MVN=mvnw test
+# Глобальный Maven: make MVN=mvn test
 
-MVN ?= mvn
+MVN ?= ./mvnw
 
 .PHONY: all compile test package clean verify help
 
@@ -29,4 +29,5 @@ verify:
 
 help:
 	@echo "Цели: compile, test (по умолчанию), package, package-with-tests, clean, verify, all"
-	@echo "Переменная MVN: исполняемый файл Maven (по умолчанию: mvn)."
+	@echo "Переменная MVN: исполняемый файл Maven (по умолчанию: ./mvnw из Maven Wrapper)."
+	@echo "verify: полный цикл до фазы verify — тесты (Surefire) и проверки Enforcer (JDK ≥24, Maven ≥3.9)."

@@ -49,8 +49,8 @@
 ### Предварительные требования
 
 - Установленный **JDK 24** (как в `pom.xml`; на других машинах можно использовать ту же мажорную версию или выше при необходимости согласовать `maven.compiler.*`).
-- [Apache Maven](https://maven.apache.org/) для сборки из командной строки (в IntelliJ обычно встроен).
-- Для целей из `Makefile` — **GNU Make** (`make`); Maven всё равно должен быть доступен, обёртка лишь вызывает `mvn`.
+- Для сборки из терминала достаточно **Maven Wrapper** в репозитории (`./mvnw`): подтянет фиксированный Maven **3.9.14**, глобально ставить Maven не обязательно. Отдельная установка [Apache Maven](https://maven.apache.org/) нужна только если сознательно вызываете `mvn` (или `make MVN=mvn`).
+- Для целей из `Makefile` — **GNU Make** (`make`); по умолчанию `make` вызывает `./mvnw`.
 
 ### Сборка и запуск
 
@@ -64,10 +64,10 @@
 2. Сборка и тесты:
 
    ```bash
-   mvn test
+   ./mvnw test
    ```
 
-   Если в терминале команда `mvn` не находится, используйте Maven из IDE (IntelliJ / VS Code) или укажите полный путь к исполняемому файлу `mvn`.
+   Эквивалент с установленным в системе Maven: `mvn test`. В IDE по-прежнему можно использовать встроенный Maven.
 
 3. **Через Makefile** (необязательно) — те же операции короткими командами:
 
@@ -77,14 +77,18 @@
    make package      # JAR без тестов (-DskipTests)
    make package-with-tests
    make clean
-   make verify
+   make verify       # тесты + фаза verify (в т.ч. Maven Enforcer: JDK ≥ 24, Maven ≥ 3.9)
    make help         # список целей
    ```
 
-   Другой бинарник Maven: `make MVN=./mvnw test` (если в проекте есть wrapper).
+   Глобальный Maven при необходимости: `make MVN=mvn test`.
 
 В IDE можно запускать отдельные классы с `main` или JUnit-тесты, подключив на classpath зависимости из `pom.xml` (JUnit 5).
 
 ### Тесты
 
-JUnit 5-тесты лежат в `src/test/java/` с **той же пакетной иерархией**, что и код в `src/main/java` (например, `chapter09.dijkstraAlgorithm.DijkstraAlgorithmTest`). Полный прогон `mvn test` (или `make` / `make test`) проверяет согласованность последовательных и параллельных реализаций там, где обе есть (глава 13).
+JUnit 5-тесты лежат в `src/test/java/` с **той же пакетной иерархией**, что и код в `src/main/java` (например, `chapter09.dijkstraAlgorithm.DijkstraAlgorithmTest`). Полный прогон `./mvnw test` (или `make` / `make test`) проверяет согласованность последовательных и параллельных реализаций там, где обе есть (глава 13).
+
+### CI
+
+На ветке `master` при push и в pull request запускается [GitHub Actions](.github/workflows/ci.yml): `./mvnw -B verify` на **Temurin** JDK **24** и **25** (24 — основная целевая версия проекта).
