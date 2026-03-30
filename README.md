@@ -32,6 +32,7 @@
 - `chapter12.kNearestNeighbors/` — k ближайших соседей (KNN): классификация по голосованию и регрессия средним по соседям, евклидово расстояние.
 - **Глава 13** (финал книги, «куда двигаться дальше», плюс параллельные варианты типичных шагов):
   - `chapter13.linearRegression/` — линейная регрессия, минимизация MSE градиентным спуском: `train`, `trainParallel` (параллельно по объектам выборки, накопление градиента через `DoubleAdder`).
+  - `chapter13.linearProgramming/` — [линейное программирование](https://en.wikipedia.org/wiki/Linear_programming) (оптимизация линейной цели при линейных ограничениях), **не путать с линейной регрессией**: симплекс-метод для максимума \(c^\top x\) при \(A x \le b\), \(x \ge 0\) (слаки добавляются внутри; требуется \(b_i \ge 0\) для всех строк — одна фаза, без искусственных переменных). Публичный API: `maximize`, `minimize` (через максимизацию \(-c\)), результат `Solution` со статусами `OPTIMAL` / `UNBOUNDED` / зарезервированным `INFEASIBLE`; утилиты `objectiveAt`, `isFeasible`. Тесты: `LinearProgrammingTest`.
   - `chapter13.invertedIndex/` — инвертированный индекс, поиск по терминам и комбинациям (И / ИЛИ): `add`, статические `buildParallel` для параллельной индексации списка документов.
   - `chapter13.localitySensitive/` — [локально-чувствительное хеширование](https://en.wikipedia.org/wiki/Locality-sensitive_hashing) (LSH) на базе MinHash для множеств признаков в виде `long` (например, хеши шинглов): `MinHash` строит подпись, `MinHashLshIndex` — индекс с полосами (`add`, `queryCandidates`, `candidateNeighbors`, оценка Жаккара `estimatedJaccard`). Тесты: `MinHashLshIndexTest`.
   - `chapter13.fourier/` — ДПФ для произвольной длины и БПФ Cooley–Tukey (основание 2) для длин — степень двойки; прямые и обратные преобразования; параллельные варианты `parallelDft`, `parallelInverseDft`, `parallelFft`, `parallelInverseFft` на общем `ForkJoinPool`.
@@ -71,4 +72,4 @@
 
 ### Тесты
 
-В `src/test/java/` лежат JUnit 5-тесты для модулей выше (включая `DiffieHellmanTest` для DH и упрощённого согласования ключей, `MinHashLshIndexTest` для LSH). Полный прогон `mvn test` проверяет согласованность последовательных и параллельных реализаций там, где обе есть (глава 13).
+В `src/test/java/` лежат JUnit 5-тесты для модулей выше (включая `DiffieHellmanTest` для DH и упрощённого согласования ключей, `MinHashLshIndexTest` для LSH, `LinearProgrammingTest` для симплекса). Полный прогон `mvn test` проверяет согласованность последовательных и параллельных реализаций там, где обе есть (глава 13).
