@@ -80,9 +80,9 @@ class DepthFirstSearchTest {
         assertEquals(0, a.getDistance());
         assertEquals(1, b.getDistance());
         assertNotNull(b.getPrevious());
-        assertEquals(Integer.MAX_VALUE, x.getDistance());
+        assertEquals(Node.UNREACHABLE, x.getDistance());
         assertNull(x.getPrevious());
-        assertEquals(Integer.MAX_VALUE, y.getDistance());
+        assertEquals(Node.UNREACHABLE, y.getDistance());
         assertNull(y.getPrevious());
     }
 
@@ -110,9 +110,9 @@ class DepthFirstSearchTest {
         assertEquals(2, performRecursiveDFS(g, x, lines2::add));
         assertTrue(joinLog(lines2).contains("Всего посещено узлов: 2"));
 
-        assertEquals(Integer.MAX_VALUE, a.getDistance());
+        assertEquals(Node.UNREACHABLE, a.getDistance());
         assertNull(a.getPrevious());
-        assertEquals(Integer.MAX_VALUE, b.getDistance());
+        assertEquals(Node.UNREACHABLE, b.getDistance());
         assertNull(b.getPrevious());
 
         assertEquals(0, x.getDistance());

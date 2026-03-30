@@ -9,10 +9,10 @@ import java.util.*;
 public class DijkstraAlgorithm {
 
     /** Запись в очереди: при улучшении пути кладём новую пару вместо remove + decrease-key (O(log n) на offer). */
-    private record QueueEntry(int distance, Node node) implements Comparable<QueueEntry> {
+    private record QueueEntry(long distance, Node node) implements Comparable<QueueEntry> {
         @Override
         public int compareTo(QueueEntry other) {
-            int c = Integer.compare(distance, other.distance);
+            int c = Long.compare(distance, other.distance);
             if (c != 0) {
                 return c;
             }
@@ -32,7 +32,7 @@ public class DijkstraAlgorithm {
         Objects.requireNonNull(source, "source");
         Objects.requireNonNull(allNodes, "allNodes");
         for (Node n : allNodes) {
-            n.setDistance(Integer.MAX_VALUE);
+            n.setDistance(Node.UNREACHABLE);
             n.setPrevious(null);
         }
         source.setDistance(0);
@@ -49,7 +49,7 @@ public class DijkstraAlgorithm {
 
             for (Edge edge : currentNode.getEdges()) {
                 Node neighbor = edge.getTarget();
-                int newDist = currentNode.getDistance() + edge.getWeight();
+                long newDist = Math.addExact(currentNode.getDistance(), edge.getWeight());
 
                 if (newDist < neighbor.getDistance()) {
                     neighbor.setDistance(newDist);

@@ -105,7 +105,7 @@ public class DepthFirstSearch {
      */
     private static void resetNodes(Collection<Node> nodes) {
         for (Node node : nodes) {
-            node.setDistance(Integer.MAX_VALUE);
+            node.setDistance(Node.UNREACHABLE);
             node.setPrevious(null);
         }
     }

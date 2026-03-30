@@ -183,17 +183,17 @@ public final class LinearProgramming {
      * нули в остальных строках ограничений и ноль в строке цели.
      */
     private static int basicRow(double[][] t, int m, int objRow, int col) {
-        if (Math.abs(t[objRow][col]) > 1e-7) {
+        if (Math.abs(t[objRow][col]) > EPS) {
             return -1;
         }
         int row = -1;
         for (int i = 0; i < m; i++) {
-            if (Math.abs(t[i][col] - 1.0) > 1e-7) {
+            if (Math.abs(t[i][col] - 1.0) > EPS) {
                 continue;
             }
             boolean ok = true;
             for (int k = 0; k < m; k++) {
-                if (k != i && Math.abs(t[k][col]) > 1e-7) {
+                if (k != i && Math.abs(t[k][col]) > EPS) {
                     ok = false;
                     break;
                 }

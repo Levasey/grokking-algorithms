@@ -53,7 +53,7 @@ class BreadthFirstSearchTest {
 
     private void resetNodes() {
         for (Node node : Arrays.asList(nodeA, nodeB, nodeC, nodeD, nodeE, nodeF)) {
-            node.setDistance(Integer.MAX_VALUE);
+            node.setDistance(Node.UNREACHABLE);
             node.setPrevious(null);
         }
     }
@@ -364,14 +364,14 @@ class BreadthFirstSearchTest {
     void testBFSReuse() {
         // Первый запуск BFS
         performBFS(nodeA, null);
-        int distanceFirst = nodeD.getDistance();
+        long distanceFirst = nodeD.getDistance();
 
         // Сбрасываем узлы
         resetNodes();
 
         // Второй запуск BFS с другого узла
         performBFS(nodeD, null);
-        int distanceSecond = nodeA.getDistance();
+        long distanceSecond = nodeA.getDistance();
 
         // Проверяем симметричность (для неориентированного графа)
         assertEquals(distanceFirst, distanceSecond);

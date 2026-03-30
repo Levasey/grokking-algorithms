@@ -1,14 +1,14 @@
 package utilities;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 public class Graph {
     private final List<Node> nodes;
 
     public Graph() {
-        nodes = new LinkedList<>();
+        nodes = new ArrayList<>();
     }
 
     public void addNode(Node node) {

@@ -35,7 +35,7 @@ public final class BellmanFord {
             vertices.add(n);
         }
         for (Node n : vertices) {
-            n.setDistance(Integer.MAX_VALUE);
+            n.setDistance(Node.UNREACHABLE);
             n.setPrevious(null);
         }
         source.setDistance(0);
@@ -55,15 +55,15 @@ public final class BellmanFord {
     private static boolean relaxAllEdges(List<Node> vertices) {
         boolean changed = false;
         for (Node u : vertices) {
-            int du = u.getDistance();
-            if (du == Integer.MAX_VALUE) {
+            long du = u.getDistance();
+            if (du == Node.UNREACHABLE) {
                 continue;
             }
             for (Edge edge : u.getEdges()) {
                 Node v = edge.getTarget();
-                long relaxed = (long) du + edge.getWeight();
+                long relaxed = du + edge.getWeight();
                 if (relaxed < v.getDistance()) {
-                    v.setDistance((int) relaxed);
+                    v.setDistance(relaxed);
                     v.setPrevious(u);
                     changed = true;
                 }
@@ -74,13 +74,13 @@ public final class BellmanFord {
 
     private static boolean hasRelaxableEdge(List<Node> vertices) {
         for (Node u : vertices) {
-            int du = u.getDistance();
-            if (du == Integer.MAX_VALUE) {
+            long du = u.getDistance();
+            if (du == Node.UNREACHABLE) {
                 continue;
             }
             for (Edge edge : u.getEdges()) {
                 Node v = edge.getTarget();
-                if ((long) du + edge.getWeight() < v.getDistance()) {
+                if (du + edge.getWeight() < v.getDistance()) {
                     return true;
                 }
             }

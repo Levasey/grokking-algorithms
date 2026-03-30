@@ -68,7 +68,7 @@ public class BreadthFirstSearch {
 
     // Дополнительный метод для восстановления пути от стартового узла к целевому
     public static List<Node> getPathTo(Node target) {
-        if (target == null || target.getDistance() == Integer.MAX_VALUE) {
+        if (target == null || target.getDistance() == Node.UNREACHABLE) {
             return Collections.emptyList();
         }
 

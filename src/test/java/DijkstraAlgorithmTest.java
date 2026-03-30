@@ -86,13 +86,13 @@ class DijkstraAlgorithmTest {
         calculate(graph, x);
         assertEquals(0, x.getDistance());
         assertEquals(1, y.getDistance());
-        assertEquals(Integer.MAX_VALUE, a.getDistance());
+        assertEquals(Node.UNREACHABLE, a.getDistance());
 
         calculate(graph, a);
         assertEquals(0, a.getDistance());
         assertEquals(1, b.getDistance());
-        assertEquals(Integer.MAX_VALUE, x.getDistance());
-        assertEquals(Integer.MAX_VALUE, y.getDistance());
+        assertEquals(Node.UNREACHABLE, x.getDistance());
+        assertEquals(Node.UNREACHABLE, y.getDistance());
     }
 
     @Test
@@ -109,7 +109,7 @@ class DijkstraAlgorithmTest {
 
         assertEquals(1, a.getDistance());
         assertEquals(0, b.getDistance());
-        assertEquals(Integer.MAX_VALUE, orphan.getDistance());
+        assertEquals(Node.UNREACHABLE, orphan.getDistance());
         assertTrue(orphan.getPrevious() == null);
     }
 }

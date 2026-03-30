@@ -1,5 +1,9 @@
 package chapter04.quicksort;
 
+/**
+ * Быстрая сортировка (Lomuto): перед разбиением опорный элемент — медиана трёх ({@code low}, середина, {@code high}),
+ * чтобы типичный случай уже отсортированного входа не деградировал к квадратичному времени.
+ */
 public class QuickSort {
     public static void quickSort(int[] arr) {
         int low = 0;
@@ -15,7 +19,22 @@ public class QuickSort {
         }
     }
 
+    private static void medianOfThreePivotToEnd(int[] arr, int low, int high) {
+        int mid = low + (high - low) / 2;
+        if (arr[low] > arr[mid]) {
+            swap(arr, low, mid);
+        }
+        if (arr[low] > arr[high]) {
+            swap(arr, low, high);
+        }
+        if (arr[mid] > arr[high]) {
+            swap(arr, mid, high);
+        }
+        swap(arr, mid, high);
+    }
+
     private static int partition(int[] arr, int low, int high) {
+        medianOfThreePivotToEnd(arr, low, high);
         int pivot = arr[high];
         int i = low - 1;
         for (int j = low; j < high; j++) {
