@@ -50,6 +50,7 @@
 
 - Установленный **JDK 24** (как в `pom.xml`; на других машинах можно использовать ту же мажорную версию или выше при необходимости согласовать `maven.compiler.*`).
 - [Apache Maven](https://maven.apache.org/) для сборки из командной строки (в IntelliJ обычно встроен).
+- Для целей из `Makefile` — **GNU Make** (`make`); Maven всё равно должен быть доступен, обёртка лишь вызывает `mvn`.
 
 ### Сборка и запуск
 
@@ -68,8 +69,22 @@
 
    Если в терминале команда `mvn` не находится, используйте Maven из IDE (IntelliJ / VS Code) или укажите полный путь к исполняемому файлу `mvn`.
 
+3. **Через Makefile** (необязательно) — те же операции короткими командами:
+
+   ```bash
+   make              # по умолчанию: как mvn test
+   make compile
+   make package      # JAR без тестов (-DskipTests)
+   make package-with-tests
+   make clean
+   make verify
+   make help         # список целей
+   ```
+
+   Другой бинарник Maven: `make MVN=./mvnw test` (если в проекте есть wrapper).
+
 В IDE можно запускать отдельные классы с `main` или JUnit-тесты, подключив на classpath зависимости из `pom.xml` (JUnit 5).
 
 ### Тесты
 
-JUnit 5-тесты лежат в `src/test/java/` с **той же пакетной иерархией**, что и код в `src/main/java` (например, `chapter09.dijkstraAlgorithm.DijkstraAlgorithmTest`). Полный прогон `mvn test` проверяет согласованность последовательных и параллельных реализаций там, где обе есть (глава 13).
+JUnit 5-тесты лежат в `src/test/java/` с **той же пакетной иерархией**, что и код в `src/main/java` (например, `chapter09.dijkstraAlgorithm.DijkstraAlgorithmTest`). Полный прогон `mvn test` (или `make` / `make test`) проверяет согласованность последовательных и параллельных реализаций там, где обе есть (глава 13).
