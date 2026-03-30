@@ -7,8 +7,8 @@ import utilities.Node;
 import java.util.Arrays;
 import java.util.List;
 
-import static chapter08.dijkstraAlgorithm.DijkstraAlgorithm.calculate;
-import static chapter08.dijkstraAlgorithm.DijkstraAlgorithm.getShortestPathTo;
+import static chapter09.dijkstraAlgorithm.DijkstraAlgorithm.calculate;
+import static chapter09.dijkstraAlgorithm.DijkstraAlgorithm.getShortestPathTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

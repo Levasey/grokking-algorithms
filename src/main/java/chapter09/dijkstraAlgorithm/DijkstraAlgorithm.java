@@ -1,4 +1,4 @@
-package chapter08.dijkstraAlgorithm;
+package chapter09.dijkstraAlgorithm;
 
 import utilities.Edge;
 import utilities.Graph;
