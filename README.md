@@ -28,6 +28,7 @@
 - `chapter09.dijkstraAlgorithm/` — Алгоритм Дейкстры.
 - `chapter10.greedyAlgorithms/` — Жадные алгоритмы (задача о покрытии множества).
 - `chapter11.dynamicProgramming/` — Динамическое программирование (задача о рюкзаке, самая длинная общая подпоследовательность).
+- `chapter12.kNearestNeighbors/` — k ближайших соседей (KNN): классификация по голосованию и регрессия средним по соседям, евклидово расстояние.
 - `utilities/` — Общие структуры данных (Граф, Узел и т.д.).
 
 ## 🚀 Как запустить
@@ -42,7 +43,7 @@
 1. Клонируйте репозиторий:
 
    ```bash
-   git clone https://github.com/yourusername/grokking-algorithms.git
+   git clone https://github.com/Levasey/grokking-algorithms.git
    cd grokking-algorithms
    ```
 
