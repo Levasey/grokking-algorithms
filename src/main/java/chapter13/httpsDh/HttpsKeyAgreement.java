@@ -67,6 +67,8 @@ public final class HttpsKeyAgreement {
 
     /**
      * Явная последовательность сообщений (как «запись» ServerHello+ServerKeyExchange и ClientKeyExchange).
+     *
+     * @param trace буфер для текстовой трассировки или {@code null}, если вывод не нужен
      */
     public static SessionKeys performDheHandshake(SecureRandom random, StringBuilder trace) {
         DiffieHellman.Parameters params = DiffieHellman.textbookDemoParameters();
@@ -93,6 +95,12 @@ public final class HttpsKeyAgreement {
         return keys;
     }
 
+    /**
+     * Демонстрационный KDF: SHA-256 от pre-master и два дополнительных хеша от помеченных конкатенаций.
+     * Это <em>не</em> PRF из TLS 1.2 и не HKDF (TLS 1.3); ключи годятся только для иллюстрации потока рукопожатия.
+     *
+     * @param preMasterSecret общий секрет Диффи–Хеллмана (как BigInteger)
+     */
     public static SessionKeys deriveSessionKeys(BigInteger preMasterSecret) {
         byte[] pmBytes = preMasterSecret.toByteArray();
         byte[] h;

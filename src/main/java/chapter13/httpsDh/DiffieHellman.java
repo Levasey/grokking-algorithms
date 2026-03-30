@@ -77,6 +77,9 @@ public final class DiffieHellman {
 
         /**
          * Общий секрет: {@code peerPublic^privateKey mod p}.
+         * <p>
+         * В учебном коде нет проверок на малые подгруппы и корректность открытого ключа партнёра; в TLS и иных
+         * стандартах такие проверки обязательны против атак вроде «невалидная точка».
          */
         public BigInteger sharedSecret(BigInteger peerPublic) {
             Objects.requireNonNull(peerPublic, "peerPublic");

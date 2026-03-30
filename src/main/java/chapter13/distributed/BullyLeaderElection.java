@@ -26,6 +26,7 @@ public final class BullyLeaderElection {
     /**
      * Запуск выборов от процесса {@code initiator} среди {@code aliveIds}.
      *
+     * @param trace если не {@code null}, список очищается и заполняется шагами симуляции; при {@code null} трассировка отключена
      * @return идентификатор нового лидера, если множество живых непусто
      */
     public static OptionalInt run(int initiator, SortedSet<Integer> aliveIds, List<ElectionStep> trace) {

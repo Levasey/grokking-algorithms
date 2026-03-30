@@ -8,6 +8,9 @@ import java.util.stream.IntStream;
 /**
  * Линейная регрессия: модель {@code y ≈ w₀ + w₁·x₁ + … + wₙ·xₙ}.
  * Обучение — пакетный градиентный спуск по среднеквадратичной ошибке (MSE).
+ * <p>
+ * Учебная реализация: не стохастический спуск, нет регуляризации и адаптивных методов (Adam и т.д.).
+ * Сходимость и масштаб градиентов зависят от нормализации признаков и выбора шага {@code learningRate}.
  */
 public final class LinearRegression {
 
@@ -114,7 +117,8 @@ public final class LinearRegression {
 
     /**
      * То же, что {@link #train}, но вычисление предсказаний и частичных градиентов по объектам выполняется параллельно
-     * (общий пул форков). Численно совпадает с последовательной версией при той же арифметике IEEE-754.
+     * ({@link java.util.concurrent.ForkJoinPool#commonPool()}). Из-за недетерминированного порядка суммирования
+     * с плавающей точкой результат может минимально отличаться от {@link #train} на том же входе.
      */
     public static FitResult trainParallel(double[][] x, double[] y, double learningRate, int maxIterations, double epsilon) {
         Objects.requireNonNull(x, "x");

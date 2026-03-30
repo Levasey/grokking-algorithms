@@ -8,6 +8,9 @@ import java.util.Objects;
  * Приоритетная очередь: элемент с наименьшим значением по {@link Comparator} извлекается первым
  * (для {@link Comparable} через {@link #naturalOrder()} — минимальный ключ первым).
  * Реализована бинарной мин-кучей {@link MinHeap}.
+ * <p>
+ * Имя совпадает с {@link java.util.PriorityQueue}, но тип другой; для API коллекций JDK используйте класс из {@code java.util}.
+ * Не потокобезопасна.
  */
 public final class PriorityQueue<E> {
 

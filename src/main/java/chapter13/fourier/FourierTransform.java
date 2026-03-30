@@ -9,12 +9,18 @@ import java.util.stream.IntStream;
  * <p>
  * Прямое преобразование: {@code X[k] = Σ_n x[n]·exp(-2πi·k·n/N)}.<br>
  * Обратное: {@code x[n] = (1/N)·Σ_k X[k]·exp(+2πi·k·n/N)}.
+ * <p>
+ * Методы с префиксом {@code parallel} используют {@link java.util.concurrent.ForkJoinPool#commonPool()}; порядок
+ * работы потоков не фиксирован, численный результат согласован с последовательными аналогами в пределах {@code double}.
  */
 public final class FourierTransform {
 
     private FourierTransform() {
     }
 
+    /**
+     * Комплексное число в алгебраической форме ({@code re} + i·{@code im}).
+     */
     public record Complex(double re, double im) {
         public Complex {
             if (Double.isNaN(re) || Double.isNaN(im)) {

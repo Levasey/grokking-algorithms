@@ -5,6 +5,11 @@ import java.util.Objects;
 /**
  * Линейное программирование: максимизация {@code c·x} при ограничениях {@code A·x ≤ b}, {@code x ≥ 0}.
  * Слаки добавляются автоматически; симплекс-метод (одна фаза при {@code b ≥ 0}).
+ * <p>
+ * <b>Учебный объём:</b> при нарушенных предпосылках (например, отрицательные {@code bᵢ} без двухфазного симплекса)
+ * или вырожденности или ошибках округления поведение может отличаться от промышленных солверов.
+ * Статус {@link Status#INFEASIBLE} зарезервирован; текущая реализация на успешном проходе возвращает только
+ * {@link Status#OPTIMAL} или {@link Status#UNBOUNDED}.
  */
 public final class LinearProgramming {
 
@@ -18,13 +23,20 @@ public final class LinearProgramming {
         OPTIMAL,
         /** Целевая функция не ограничена сверху на допустимом множестве */
         UNBOUNDED,
-        /** Для текущей формулировки ({@code b ≥ 0} при старте) начальная УР не строится */
+        /**
+         * Недопустимая задача в общем виде (например, пустое допустимое множество). В данной однофазной реализации
+         * не возвращается успешным завершением {@link #maximize(double[], double[][], double[])} — значение
+         * зафиксировано для расширения API и согласования с полноценными солверами.
+         */
         INFEASIBLE
     }
 
     /**
-     * @param x значения исходных переменных решения (длина {@code c.length}), при {@link Status#OPTIMAL}
-     * @param objectiveValue значение {@code c·x} в оптимуме
+     * @param status итог симплекса
+     * @param x при {@link Status#OPTIMAL} — значения исходных переменных (длина {@code c.length}); при
+     *          {@link Status#UNBOUNDED} — {@code null}; при {@link Status#INFEASIBLE} — не используется
+     * @param objectiveValue при {@link Status#OPTIMAL} — {@code c·x}; при {@link Status#UNBOUNDED} — {@code Infinity};
+     *                       иначе не определён
      * @param pivotCount число выполненных опорных преобразований
      */
     public record Solution(Status status, double[] x, double objectiveValue, int pivotCount) {
@@ -226,7 +238,8 @@ public final class LinearProgramming {
     }
 
     /**
-     * Проверяет допустимость: {@code A·x ≤ b} и {@code x ≥ 0} с допуском {@value #EPS}.
+     * Проверяет допустимость: {@code A·x ≤ b} и {@code x ≥ 0} с заданным допуском {@code tolerance}
+     * по нарушениям ограничений и отрицательным компонентам {@code x} (симплекс внутри использует порядка {@code 1e-9}).
      */
     public static boolean isFeasible(double[][] A, double[] b, double[] x, double tolerance) {
         Objects.requireNonNull(A, "A");

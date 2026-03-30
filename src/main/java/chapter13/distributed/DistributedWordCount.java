@@ -18,9 +18,15 @@ public final class DistributedWordCount {
 
     private static final Pattern WORD = Pattern.compile("[\\p{IsAlphabetic}\\p{IsDigit}]+");
 
+    /**
+     * Одна пара «слово — локальный вклад» после map (обычно {@code count == 1} на каждое вхождение токена).
+     */
     public record MapOutput(String word, int count) {
     }
 
+    /**
+     * Итог reduce: агрегированная частота слова по всем виртуальным узлам.
+     */
     public record ReduceShard(String word, int total) implements Comparable<ReduceShard> {
         @Override
         public int compareTo(ReduceShard o) {
