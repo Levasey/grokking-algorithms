@@ -37,6 +37,7 @@
   - `chapter13.parallel/` — учебные примитивы в духе map/reduce: `ParallelMapReduce.parallelSum`, `mapReduce`.
   - `chapter13.bloomFilter/` — [фильтр Блума](https://en.wikipedia.org/wiki/Bloom_filter): вероятностное множество без ложноотрицательных ответов; `add`, `mightContain`; размер битовой карты и число хеш-функций подбираются по ожидаемому числу вставок и целевой вероятности ложноположительного срабатывания (есть и явный конструктор с фиксированными `bitSize` и `hashFunctionCount`).
   - `chapter13.hyperLogLog/` — [HyperLogLog](https://en.wikipedia.org/wiki/HyperLogLog): оценка кардинальности (числа различных элементов) с фиксированной памятью `2^precision` регистров; `add`, `estimateCardinality`; параметр `precision` в диапазоне [4, 18]; для малых истинных кардинальностей используется поправка linear counting по числу нулевых регистров. Тесты: `HyperLogLogTest`.
+  - `chapter13.httpsDh/` — [протокол Диффи–Хеллмана](https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange) и связь с HTTPS/TLS на учебном уровне: класс `DiffieHellman` (`Parameters` с модулем и образующим, сторона `Party`, общий секрет `sharedSecret`); для примеров — `textbookDemoParameters()` (малые `p` и `g`, не для реальных систем). `HttpsKeyAgreement` имитирует DHE-рукопожатие (эфемерные открытые ключи, одинаковый pre-master у клиента и сервера) и демонстративно выводит два 32-байтовых направленных ключа через SHA-256; это не полный PRF/HKDF TLS 1.2. Для трассировки шагов есть перегрузка `performDheHandshake(random, StringBuilder)`. Тесты: `DiffieHellmanTest`.
   - `chapter13.distributed/` — распределённые идеи в учебной форме: `LamportClock`, `VectorClock`, симуляция выборов лидера `BullyLeaderElection`, симуляция MapReduce `DistributedWordCount`.
 - `utilities/` — Общие структуры данных (Граф, Узел, Рёбра и т.д.).
 
@@ -68,4 +69,4 @@
 
 ### Тесты
 
-В `src/test/java/` лежат JUnit 5-тесты для модулей выше. Полный прогон `mvn test` проверяет согласованность последовательных и параллельных реализаций там, где обе есть (глава 13).
+В `src/test/java/` лежат JUnit 5-тесты для модулей выше (включая `DiffieHellmanTest` для DH и упрощённого согласования ключей). Полный прогон `mvn test` проверяет согласованность последовательных и параллельных реализаций там, где обе есть (глава 13).
