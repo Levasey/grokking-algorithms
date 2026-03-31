@@ -16,7 +16,7 @@
         <jacoco.version>0.8.13</jacoco.version>
         <spotbugs.maven.version>4.9.3.2</spotbugs.maven.version>
         <checkstyle.maven.version>3.6.0</checkstyle.maven.version>
-        <checkstyle.tool.version>10.23.1</checkstyle.tool.version>
+        <checkstyle.tool.version>13.4.0</checkstyle.tool.version>
     </properties>
 
     <dependencies>
